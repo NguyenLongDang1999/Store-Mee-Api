@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Category {
+    id               String       @id @default(cuid())
+    name             String       @db.VarChar
+    slug             String       @unique @db.VarChar
+    image_uri        String?      @db.VarChar
+    description      String?      @db.VarChar
+    parent_id        String?
+    status           Int?         @default(2) @db.SmallInt
+    popular          Int?         @default(2) @db.SmallInt
+    meta_title       String?      @db.VarChar
+    meta_keyword     String?      @db.VarChar
+    meta_description String?      @db.VarChar
+    created_at       DateTime     @default(now())
+    updated_at       DateTime     @updatedAt
+    deleted_flg      Boolean      @default(false)
+    parentCategory   Category?    @relation("CategoryToCategory", fields: [parent_id], references: [id], onDelete: Cascade)
+    Category         Category[]   @relation("CategoryToCategory")
+    Brand            Brand[]
+    Attributes       Attributes[]
+    Product          Product[]
+
+    @@index([status, popular, parent_id])
+}
+
+model Brand {
+    id          String    @id @default(cuid())
+    name        String    @db.VarChar
+    slug        String    @unique @db.VarChar
+    image_uri   String?   @db.VarChar
+    description String?   @db.VarChar
+    category_id String?
+    status      Int?      @default(2) @db.SmallInt
+    popular     Int?      @default(2) @db.SmallInt
+    created_at  DateTime  @default(now())
+    updated_at  DateTime  @updatedAt
+    deleted_flg Boolean   @default(false)
+    Category    Category? @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    Product     Product[]
+
+    @@index([status, popular, category_id])
+}
+
+model Attributes {
+    id               String             @id @default(cuid())
+    name             String             @db.VarChar
+    slug             String             @unique @db.VarChar
+    description      String?            @db.VarChar
+    category_id      String?
+    created_at       DateTime           @default(now())
+    updated_at       DateTime           @updatedAt
+    deleted_flg      Boolean            @default(false)
+    Category         Category?          @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    Variations       Variations[]
+    ProductAttribute ProductAttribute[]
+
+    @@index([category_id])
+}
+
+model Variations {
+    id               String             @id @default(cuid())
+    name             String             @db.VarChar
+    attribute_id     String?
+    created_at       DateTime           @default(now())
+    updated_at       DateTime           @updatedAt
+    deleted_flg      Boolean            @default(false)
+    Attribute        Attributes?        @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+    ProductVariation ProductVariation[]
+
+    @@index([attribute_id])
+}
+
+model ProductAttribute {
+    id               String             @id @default(cuid())
+    product_id       String?
+    attribute_id     String?
+    Attribute        Attributes?        @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+    Product          Product?           @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    ProductVariation ProductVariation[]
+
+    @@index([product_id, attribute_id])
+}
+
+model ProductVariation {
+    id                   String            @id @default(cuid())
+    product_attribute_id String?
+    variation_id         String?
+    ProductAttribute     ProductAttribute? @relation(fields: [product_attribute_id], references: [id], onDelete: Cascade)
+    Variations           Variations?       @relation(fields: [variation_id], references: [id], onDelete: Cascade)
+
+    @@index([variation_id, product_attribute_id])
+}
+
+model ProductCombination {
+    id         String   @id @default(cuid())
+    product_id String?
+    sku        String   @db.VarChar
+    price      Float    @db.Real
+    Product    Product? @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+    @@index([product_id])
+}
+
+model ProductGalleryDetail {
+    id          String   @id @default(cuid())
+    product_id  String?
+    Product     Product? @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    deleted_flg Boolean  @default(false)
+
+    @@index([product_id])
+}
+
+model Product {
+    id                   String                 @id @default(cuid())
+    sku                  String                 @db.VarChar
+    name                 String                 @db.VarChar
+    slug                 String                 @unique @db.VarChar
+    image_uri            String?                @db.VarChar
+    short                String?                @db.VarChar
+    quantity             Int                    @db.SmallInt
+    category_id          String
+    brand_id             String?
+    content              String?                @db.Text
+    price                Float                  @db.Real
+    type_discount        Int                    @db.SmallInt
+    price_discount       Float?                 @db.Real
+    status               Int?                   @default(1) @db.SmallInt
+    popular              Int?                   @default(2) @db.SmallInt
+    meta_title           String?                @db.VarChar
+    meta_keyword         String?                @db.VarChar
+    meta_description     String?                @db.VarChar
+    created_at           DateTime               @default(now())
+    updated_at           DateTime               @updatedAt
+    deleted_flg          Boolean                @default(false)
+    Category             Category               @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    Brand                Brand?                 @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+    ProductAttribute     ProductAttribute[]
+    ProductCombination   ProductCombination[]
+    ProductGalleryDetail ProductGalleryDetail[]
+
+    @@index([brand_id, category_id, status, popular])
+}
+
+model Admins {
+    id            String   @id @default(cuid())
+    name          String   @db.VarChar
+    email         String   @unique @db.VarChar
+    password      String   @db.VarChar
+    phone         String?  @db.VarChar
+    job           String?  @db.VarChar
+    gender        Int?     @db.SmallInt
+    address       String?  @db.VarChar
+    refresh_token String?  @db.VarChar
+    role          Int      @db.SmallInt
+    image_uri     String?  @db.VarChar
+    created_at    DateTime @default(now())
+    updated_at    DateTime @updatedAt
+    deleted_flg   Boolean  @default(false)
+
+    @@index([role, gender])
+}
