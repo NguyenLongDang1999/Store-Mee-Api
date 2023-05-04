@@ -28,7 +28,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 import { CategoryService } from './category.service'
 import { CategorySearch } from './category.interface'
 
-@UseGuards(AccessTokenGuard)
+// @UseGuards(AccessTokenGuard)
 @Controller('category')
 export class CategoryController {
     constructor(private readonly categoryService: CategoryService) {}

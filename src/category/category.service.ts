@@ -64,14 +64,21 @@ export class CategoryService {
             }
         })
 
-        const totalPage = await this.prisma.category.aggregate({
+        // const totalPage = await this.prisma.category.aggregate({
+        //     where: search,
+        //     _count: true
+        // })
+
+        // const aggregations = Math.ceil(totalPage._count / query.pageSize) || 1
+
+        const aggregations = await this.prisma.category.aggregate({
             where: search,
             _count: true
         })
 
-        const aggregations = Math.ceil(totalPage._count / query.pageSize) || 1
+        // const aggregations = Math.ceil(totalPage._count / query.pageSize) || 1
 
-        return { data, aggregations }
+        return { data, aggregations: aggregations._count }
     }
 
     async categoryExist(slug: string, id?: string) {
