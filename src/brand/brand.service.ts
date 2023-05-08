@@ -61,14 +61,12 @@ export class BrandService {
             }
         })
 
-        const totalPage = await this.prisma.brand.aggregate({
+        const aggregations = await this.prisma.brand.aggregate({
             where: search,
             _count: true
         })
 
-        const aggregations = Math.ceil(totalPage._count / query.pageSize) || 1
-
-        return { data, aggregations }
+        return { data, aggregations: aggregations._count }
     }
 
     async brandExist(slug: string, id?: string) {
