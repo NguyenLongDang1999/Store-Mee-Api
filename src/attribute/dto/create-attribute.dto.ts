@@ -3,14 +3,27 @@ import {
     IsNotEmpty,
     IsString,
     MaxLength,
-    MinLength,
-    IsOptional
+    IsOptional,
+    ValidateNested
 } from 'class-validator'
+
+import { Type } from 'class-transformer'
+
+class CreateVariantDto {
+    @IsOptional()
+    @ApiProperty({ required: false })
+        attribute_id?: string
+
+    @IsNotEmpty()
+    @IsString()
+    @MaxLength(30)
+    @ApiProperty()
+        name: string
+}
 
 export class CreateAttributeDto {
     @IsNotEmpty()
     @IsString()
-    @MinLength(3)
     @MaxLength(30)
     @ApiProperty()
         name: string
@@ -28,4 +41,9 @@ export class CreateAttributeDto {
     @MaxLength(160)
     @ApiProperty({ required: false })
         description?: string
+
+    @IsNotEmpty()
+    @ValidateNested({ each: true })
+    @Type(() => CreateVariantDto)
+        Variations: CreateVariantDto[]
 }

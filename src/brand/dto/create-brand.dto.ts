@@ -11,7 +11,6 @@ import {
 export class CreateBrandDto {
     @IsNotEmpty()
     @IsString()
-    @MinLength(3)
     @MaxLength(30)
     @ApiProperty()
         name: string
