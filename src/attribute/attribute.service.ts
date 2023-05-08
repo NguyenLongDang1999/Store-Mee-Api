@@ -120,10 +120,27 @@ export class AttributeService {
     }
 
     async update(id: string, updateAttributeDto: UpdateAttributeDto) {
-        return await this.prisma.attributes.update({
+        const { Variations, ...attributeData } = updateAttributeDto
+
+        const attribute = await this.prisma.attributes.update({
             where: { id },
-            data: updateAttributeDto
+            data: attributeData 
         })
+
+        const variantsData = []
+        
+        updateAttributeDto.Variations.forEach(item => {
+            variantsData.push({
+                attribute_id: attribute.id,
+                name: item.name
+            })
+        })
+
+        await this.prisma.variations.createMany({
+            data: variantsData
+        })
+
+        return attribute
     }
 
     async remove(id: string) {
