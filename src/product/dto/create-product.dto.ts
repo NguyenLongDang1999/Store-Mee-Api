@@ -4,14 +4,13 @@ import {
     IsString,
     IsNumber,
     MaxLength,
-    MinLength,
     IsOptional
 } from 'class-validator'
 
 export class CreateProductDto {
     @IsNotEmpty()
     @IsString()
-    @MaxLength(10)
+    @MaxLength(20)
     @ApiProperty()
         sku: string
 
@@ -22,7 +21,6 @@ export class CreateProductDto {
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(3)
     @MaxLength(60)
     @ApiProperty()
         name: string
