@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Category {
-    id               String       @id @default(cuid())
+    id               String       @id @default(uuid())
     name             String       @db.VarChar
     slug             String       @unique @db.VarChar
     image_uri        String?      @db.VarChar
@@ -35,7 +35,7 @@ model Category {
 }
 
 model Brand {
-    id          String    @id @default(cuid())
+    id          String    @id @default(uuid())
     name        String    @db.VarChar
     slug        String    @unique @db.VarChar
     image_uri   String?   @db.VarChar
@@ -53,7 +53,7 @@ model Brand {
 }
 
 model Attributes {
-    id               String             @id @default(cuid())
+    id               String             @id @default(uuid())
     name             String             @db.VarChar
     slug             String             @unique @db.VarChar
     description      String?            @db.VarChar
@@ -69,7 +69,7 @@ model Attributes {
 }
 
 model Variations {
-    id               String             @id @default(cuid())
+    id               String             @id @default(uuid())
     name             String             @db.VarChar
     attribute_id     String?
     created_at       DateTime           @default(now())
@@ -82,7 +82,7 @@ model Variations {
 }
 
 model ProductAttribute {
-    id               String             @id @default(cuid())
+    id               String             @id @default(uuid())
     product_id       String?
     attribute_id     String?
     Attribute        Attributes?        @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
@@ -93,7 +93,7 @@ model ProductAttribute {
 }
 
 model ProductVariation {
-    id                   String            @id @default(cuid())
+    id                   String            @id @default(uuid())
     product_attribute_id String?
     variation_id         String?
     ProductAttribute     ProductAttribute? @relation(fields: [product_attribute_id], references: [id], onDelete: Cascade)
@@ -103,7 +103,7 @@ model ProductVariation {
 }
 
 model ProductCombination {
-    id         String   @id @default(cuid())
+    id         String   @id @default(uuid())
     product_id String?
     sku        String   @db.VarChar
     price      Float    @db.Real
@@ -113,7 +113,7 @@ model ProductCombination {
 }
 
 model ProductGalleryDetail {
-    id          String   @id @default(cuid())
+    id          String   @id @default(uuid())
     product_id  String?
     Product     Product? @relation(fields: [product_id], references: [id], onDelete: Cascade)
     created_at  DateTime @default(now())
@@ -124,7 +124,7 @@ model ProductGalleryDetail {
 }
 
 model Product {
-    id                   String                 @id @default(cuid())
+    id                   String                 @id @default(uuid())
     sku                  String                 @db.VarChar
     name                 String                 @db.VarChar
     slug                 String                 @unique @db.VarChar
@@ -155,7 +155,7 @@ model Product {
 }
 
 model Admins {
-    id            String   @id @default(cuid())
+    id            String   @id @default(uuid())
     name          String   @db.VarChar
     email         String   @unique @db.VarChar
     password      String   @db.VarChar

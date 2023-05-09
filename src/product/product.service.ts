@@ -9,13 +9,8 @@ import { UpdateProductDto } from './dto/update-product.dto'
 import { ProductSearch } from './product.interface'
 
 // ** Prisma Imports
-import { PrismaService } from '../prisma/prisma.service'
-
-// ** Utils Imports
-import { PAGE } from 'src/utils/enum'
-
-// ** Prisma Imports
 import { Prisma } from '@prisma/client'
+import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class ProductService {
@@ -29,13 +24,47 @@ export class ProductService {
     }
 
     async findAll(query: ProductSearch) {
-        const where = await this.searchQuery(query)
+        const search: Prisma.ProductWhereInput = {
+            deleted_flg: false,
+            sku: {
+                contains: query.sku || undefined,
+                mode: 'insensitive'
+            },
+            name: {
+                contains: query.name || undefined,
+                mode: 'insensitive'
+            },
+            category_id: {
+                equals: query.category_id || undefined
+            },
+            brand_id: {
+                equals: query.brand_id || undefined
+            },
+            status: {
+                equals: Number(query.status) || undefined
+            },
+            popular: {
+                equals: Number(query.popular) || undefined
+            },
+            quantity: {
+                equals: Number(query.quantity) || undefined
+            },
+            price: {
+                equals: Number(query.price) || undefined
+            },
+            price_discount: {
+                equals: Number(query.price_discount) || undefined
+            },
+            type_discount: {
+                equals: Number(query.type_discount) || undefined
+            }
+        }
 
         const data = await this.prisma.product.findMany({
-            take: Number(query.pageSize) || PAGE.SIZE,
+            take: Number(query.pageSize) || undefined,
             skip: Number(query.pageIndex) || undefined,
             orderBy: { created_at: 'desc' },
-            where,
+            where: search,
             select: {
                 id: true,
                 sku: true,
@@ -65,52 +94,12 @@ export class ProductService {
             }
         })
 
-        const totalPage = await this.prisma.product.aggregate({
-            where,
+        const aggregations = await this.prisma.product.aggregate({
+            where: search,
             _count: true
         })
 
-        return { data, aggregations: totalPage._count }
-    }
-
-    async searchQuery(query: ProductSearch) {
-        const where: Prisma.ProductWhereInput = {
-            deleted_flg: false,
-            sku: {
-                contains: query.sku || undefined,
-                mode: 'insensitive'
-            },
-            name: {
-                contains: query.name || undefined,
-                mode: 'insensitive'
-            },
-            brand_id: {
-                equals: query.brand_id || undefined
-            },
-            category_id: {
-                equals: query.category_id || undefined
-            },
-            quantity: {
-                equals: Number(query.quantity) || undefined
-            },
-            price: {
-                equals: Number(query.price) || undefined
-            },
-            price_discount: {
-                equals: Number(query.price_discount) || undefined
-            },
-            type_discount: {
-                equals: Number(query.type_discount) || undefined
-            },
-            status: {
-                equals: Number(query.status) || undefined
-            },
-            popular: {
-                equals: Number(query.popular) || undefined
-            }
-        }
-
-        return where
+        return { data, aggregations: aggregations._count }
     }
 
     async productExist(slug: string, id?: string) {
