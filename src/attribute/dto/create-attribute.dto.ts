@@ -8,18 +8,7 @@ import {
 } from 'class-validator'
 
 import { Type } from 'class-transformer'
-
-class CreateVariantDto {
-    @IsOptional()
-    @ApiProperty({ required: false })
-        attribute_id?: string
-
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(30)
-    @ApiProperty()
-        name: string
-}
+import { CreateVariantDto } from '../../variant/dto/create-variant.dto'
 
 export class CreateAttributeDto {
     @IsNotEmpty()

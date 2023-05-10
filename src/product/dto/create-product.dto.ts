@@ -53,10 +53,10 @@ export class CreateProductDto {
     @ApiProperty({ default: 0 })
         price: number
 
-    @IsNotEmpty()
     @IsNumber()
-    @ApiProperty({ default: 0 })
-        type_discount: number
+    @IsOptional()
+    @ApiProperty({ required: false, default: 1 })
+        type_discount = 1
 
     @IsNotEmpty()
     @IsNumber()

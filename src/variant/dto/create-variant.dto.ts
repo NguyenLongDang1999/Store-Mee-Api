@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
     IsNotEmpty,
+    IsOptional,
     IsString,
     MaxLength
 } from 'class-validator'
 
 export class CreateVariantDto {
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty()
-        attribute_id: string
+    @IsOptional()
+    @ApiProperty({ required: false })
+        attribute_id?: string
 
     @IsNotEmpty()
     @IsString()
