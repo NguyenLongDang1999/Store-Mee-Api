@@ -24,9 +24,12 @@ import { Response } from 'express'
 import { CreateAttributeDto } from './dto/create-attribute.dto'
 import { UpdateAttributeDto } from './dto/update-attribute.dto'
 
-// ** Attribute Imports
-import { AttributeService } from './attribute.service'
+// ** Types Imports
 import { AttributeSearch } from './attribute.interface'
+import { queryID } from 'src/utils/interfaces'
+
+// ** Service Imports
+import { AttributeService } from './attribute.service'
 
 @UseGuards(AccessTokenGuard)
 @Controller('attribute')
@@ -38,7 +41,7 @@ export class AttributeController {
         @Res() res: Response,
         @Body() createAttributeDto: CreateAttributeDto
     ) {
-        const attributeExist = await this.attributeService.attributeExist(createAttributeDto.slug)
+        const attributeExist = await this.attributeService.attributeExist(createAttributeDto.name, createAttributeDto.category_id)
         if (attributeExist) {
             throw new ConflictException('Attribute is Exists. Please try again!')
         }
@@ -66,21 +69,11 @@ export class AttributeController {
     }
 
     @Get('fetch-list')
-    async fetchList(@Res() res: Response) {
-        const fetchList = await this.attributeService.fetchList()
-        if (fetchList) {
-            return res.status(HttpStatus.OK).json(fetchList)
-        }
-
-        throw new BadRequestException('Bad Request. Please try again!')
-    }
-
-    @Get('fetch-list/:id')
-    async fetchListWithCategory(
-        @Res() res: Response,
-        @Param('id') id: string
+    async fetchList(
+        @Res() res: Response, 
+        @Query() params?: queryID
     ) {
-        const fetchList = await this.attributeService.fetchList(id)
+        const fetchList = await this.attributeService.fetchList(params)
         if (fetchList) {
             return res.status(HttpStatus.OK).json(fetchList)
         }
@@ -112,7 +105,7 @@ export class AttributeController {
         const find = await this.attributeService.findOne(id)
         if (!find) throw new BadRequestException('Attribute is invalid. Please try again!')
 
-        const attributeExist = await this.attributeService.attributeExist(updateAttributeDto.slug, id)
+        const attributeExist = await this.attributeService.attributeExist(updateAttributeDto.name, updateAttributeDto.category_id, id)
         if (attributeExist) throw new ConflictException('Attribute is Exists. Please try again!')
 
         const attribute = await this.attributeService.update(id, updateAttributeDto)

@@ -1,8 +1,10 @@
 // ** NestJS Imports
 import { Module } from '@nestjs/common'
 
-// ** Category Imports
+// ** Service Imports
 import { CategoryService } from './category.service'
+
+// ** Controller Imports
 import { CategoryController } from './category.controller'
 
 // ** Prisma Imports

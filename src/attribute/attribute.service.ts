@@ -5,7 +5,8 @@ import { Injectable } from '@nestjs/common'
 import { CreateAttributeDto } from './dto/create-attribute.dto'
 import { UpdateAttributeDto } from './dto/update-attribute.dto'
 
-// ** Attribute Imports
+// ** Types Imports
+import { queryID } from 'src/utils/interfaces'
 import { AttributeSearch } from './attribute.interface'
 
 // ** Prisma Imports
@@ -14,26 +15,10 @@ import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class AttributeService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async create(createAttributeDto: CreateAttributeDto) {
-        const { Variations, ...attributeData } = createAttributeDto
-
-        const attribute = await this.prisma.attributes.create({ data: attributeData })
-        const variantsData = []
-        
-        createAttributeDto.Variations.forEach(item => {
-            variantsData.push({
-                attribute_id: attribute.id,
-                name: item.name
-            })
-        })
-
-        await this.prisma.variations.createMany({
-            data: variantsData
-        })
-
-        return attribute
+        return await this.prisma.attributes.create({ data: createAttributeDto })
     }
 
     async findAll(query: AttributeSearch) {
@@ -58,11 +43,6 @@ export class AttributeService {
                 name: true,
                 created_at: true,
                 updated_at: true,
-                Variations: {
-                    select: {
-                        name: true
-                    }
-                },
                 Category: {
                     select: {
                         id: true,
@@ -81,12 +61,12 @@ export class AttributeService {
         return { data, aggregations: aggregations._count }
     }
 
-    async fetchList(id?: string) {
+    async fetchList(params: queryID) {
         return await this.prisma.attributes.findMany({
             orderBy: { created_at: 'desc' },
             where: {
                 deleted_flg: false,
-                category_id: id
+                category_id: params.id || undefined
             },
             select: {
                 id: true,
@@ -95,52 +75,33 @@ export class AttributeService {
         })
     }
 
-    async attributeExist(slug: string, id?: string) {
-        const params = id ? { slug, id: { not: id } } : { slug }
-        return await this.prisma.attributes.count({ where: params })
+    async attributeExist(name: string, category_id: string, id?: string) {
+        return await this.prisma.attributes.count({
+            where: {
+                id: { not: id || undefined },
+                name,
+                category_id
+            }
+        })
     }
 
     async findOne(id: string) {
-        return await this.prisma.attributes.findUnique({ 
+        return await this.prisma.attributes.findUnique({
             where: { id },
             select: {
                 id: true,
                 name: true,
-                slug: true,
                 category_id: true,
-                description: true,
-                Variations: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
-                }
+                description: true
             }
         })
     }
 
     async update(id: string, updateAttributeDto: UpdateAttributeDto) {
-        const { Variations, ...attributeData } = updateAttributeDto
-
-        const attribute = await this.prisma.attributes.update({
+        return await this.prisma.attributes.update({
             where: { id },
-            data: attributeData 
+            data: updateAttributeDto
         })
-
-        const variantsData = []
-        
-        updateAttributeDto.Variations.forEach(item => {
-            variantsData.push({
-                attribute_id: attribute.id,
-                name: item.name
-            })
-        })
-
-        await this.prisma.variations.createMany({
-            data: variantsData
-        })
-
-        return attribute
     }
 
     async remove(id: string) {

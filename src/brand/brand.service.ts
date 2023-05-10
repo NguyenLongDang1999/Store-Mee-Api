@@ -5,8 +5,9 @@ import { Injectable } from '@nestjs/common'
 import { CreateBrandDto } from './dto/create-brand.dto'
 import { UpdateBrandDto } from './dto/update-brand.dto'
 
-// ** Brand Imports
+// ** Types Imports
 import { BrandSearch } from './brand.interface'
+import { queryID } from 'src/utils/interfaces'
 
 // ** Prisma Imports
 import { Prisma } from '@prisma/client'
@@ -74,12 +75,12 @@ export class BrandService {
         return await this.prisma.brand.count({ where: params })
     }
 
-    async fetchList(id?: string) {
+    async fetchList(params: queryID) {
         return await this.prisma.brand.findMany({
             orderBy: { created_at: 'desc' },
             where: {
                 deleted_flg: false,
-                category_id: id
+                category_id: params.id || undefined
             },
             select: {
                 id: true,

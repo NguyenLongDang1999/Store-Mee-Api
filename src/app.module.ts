@@ -14,7 +14,6 @@ import { AdminModule } from './admin/admin.module'
 import { BrandModule } from './brand/brand.module'
 import { ProductModule } from './product/product.module'
 import { AttributeModule } from './attribute/attribute.module'
-import { VariantModule } from './variant/variant.module'
 
 @Module({
     imports: [
@@ -27,8 +26,7 @@ import { VariantModule } from './variant/variant.module'
         AdminModule,
         BrandModule,
         ProductModule,
-        AttributeModule,
-        VariantModule
+        AttributeModule
     ],
     controllers: [AppController],
     providers: [AppService]

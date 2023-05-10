@@ -1,8 +1,10 @@
 // ** NestJS Imports
 import { Module } from '@nestjs/common'
 
-// ** Brand Imports
+// ** Service Imports
 import { BrandService } from './brand.service'
+
+// ** Controller Imports
 import { BrandController } from './brand.controller'
 
 // ** Prisma Imports

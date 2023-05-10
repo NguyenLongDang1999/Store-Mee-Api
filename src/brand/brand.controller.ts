@@ -24,9 +24,12 @@ import { Response } from 'express'
 import { CreateBrandDto } from './dto/create-brand.dto'
 import { UpdateBrandDto } from './dto/update-brand.dto'
 
-// ** Brand Imports
-import { BrandService } from './brand.service'
+// ** Types Imports
 import { BrandSearch } from './brand.interface'
+import { queryID } from 'src/utils/interfaces'
+
+// ** Service Imports
+import { BrandService } from './brand.service'
 
 @UseGuards(AccessTokenGuard)
 @Controller('brand')
@@ -66,21 +69,11 @@ export class BrandController {
     }
 
     @Get('fetch-list')
-    async fetchList(@Res() res: Response) {
-        const fetchList = await this.brandService.fetchList()
-        if (fetchList) {
-            return res.status(HttpStatus.OK).json(fetchList)
-        }
-
-        throw new BadRequestException('Bad Request. Please try again!')
-    }
-
-    @Get('fetch-list/:id')
-    async fetchListWithCategory(
+    async fetchList(
         @Res() res: Response,
-        @Param('id') id: string
+        @Query() params?: queryID
     ) {
-        const fetchList = await this.brandService.fetchList(id)
+        const fetchList = await this.brandService.fetchList(params)
         if (fetchList) {
             return res.status(HttpStatus.OK).json(fetchList)
         }

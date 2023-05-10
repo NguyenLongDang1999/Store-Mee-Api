@@ -3,12 +3,8 @@ import {
     IsNotEmpty,
     IsString,
     MaxLength,
-    IsOptional,
-    ValidateNested
+    IsOptional
 } from 'class-validator'
-
-import { Type } from 'class-transformer'
-import { CreateVariantDto } from '../../variant/dto/create-variant.dto'
 
 export class CreateAttributeDto {
     @IsNotEmpty()
@@ -20,19 +16,10 @@ export class CreateAttributeDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
-        slug: string
-
-    @IsOptional()
-    @ApiProperty({ required: false })
-        category_id?: string
+        category_id: string
     
     @IsOptional()
     @MaxLength(160)
     @ApiProperty({ required: false })
         description?: string
-
-    @IsNotEmpty()
-    @ValidateNested({ each: true })
-    @Type(() => CreateVariantDto)
-        Variations: CreateVariantDto[]
 }

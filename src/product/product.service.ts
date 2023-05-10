@@ -17,10 +17,49 @@ export class ProductService {
     constructor(private prisma: PrismaService) {}
 
     async create(createProductDto: CreateProductDto) {
-        return await this.prisma.product.create({
-            data: createProductDto,
+        const { attribute, variant, ...productData } = createProductDto
+
+        const product = await this.prisma.product.create({
+            data: productData,
             select: { id: true }
         })
+
+        // const productAttribute = await this.prisma.$transaction(
+        //     attribute.map((_v) => this.prisma.productAttribute.create({ 
+        //         data: {
+        //             attribute_id: _v.id,
+        //             product_id: product.id
+        //         }
+        //     })),
+        // )
+
+        // console.log(productAttribute, '-----')
+
+        // variant.map((_v) => {
+        //     productAttribute.forEach(_p => {
+        //         console.log(_v, '------', _p)
+        // return this.prisma.productVariation.create({ 
+        //     data: {
+        //         product_attribute_id: _p.id,
+        //         variation_id: _v.toString()
+        //     }
+        // })
+        //     })
+        // })
+
+        // const productAttributeData = [{ product_id: product.id }]
+        // const productVariantionData = [product_attribute_id]
+        
+        
+        // attribute.forEach(item => productAttributeData['attribute_id'] = item.id)
+
+        // const this.prisma.productAttribute.createMany({ data: productAttributeData })
+
+        // variant.forEach(_v => {
+        //     _v.forEach(item => )
+        // })
+
+        return product
     }
 
     async findAll(query: ProductSearch) {

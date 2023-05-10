@@ -4,8 +4,26 @@ import {
     IsString,
     IsNumber,
     MaxLength,
-    IsOptional
+    IsOptional,
+    ValidateNested
 } from 'class-validator'
+
+import { Type } from 'class-transformer'
+
+// import { CreateProductVariationDto } from '../../product-variation/dto/create-product-variation.dto'
+// import { CreateProductAttributeDto } from '../../product-attribute/dto/create-product-attribute.dto'
+
+class CreateProductAttributeDto {
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty()
+        id: string
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty()
+        name: string
+}
 
 export class CreateProductDto {
     @IsNotEmpty()
@@ -91,4 +109,12 @@ export class CreateProductDto {
     @MaxLength(160)
     @ApiProperty({ required: false })
         metaDescription?: string
+
+    @IsNotEmpty()
+    @ValidateNested({ each: true })
+    @Type(() => CreateProductAttributeDto)
+        attribute: CreateProductAttributeDto[]
+
+    @IsNotEmpty()
+        variant: Array<Array<string>>
 }

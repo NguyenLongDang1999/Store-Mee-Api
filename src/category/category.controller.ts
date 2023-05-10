@@ -24,9 +24,11 @@ import { Response } from 'express'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 
-// ** Category Imports
-import { CategoryService } from './category.service'
+// ** Types Imports
 import { CategorySearch } from './category.interface'
+
+// ** Service Imports
+import { CategoryService } from './category.service'
 
 @UseGuards(AccessTokenGuard)
 @Controller('category')

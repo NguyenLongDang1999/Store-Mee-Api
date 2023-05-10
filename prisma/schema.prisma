@@ -40,13 +40,13 @@ model Brand {
     slug        String    @unique @db.VarChar
     image_uri   String?   @db.VarChar
     description String?   @db.VarChar
-    category_id String?
+    category_id String
     status      Int?      @default(2) @db.SmallInt
     popular     Int?      @default(2) @db.SmallInt
     created_at  DateTime  @default(now())
     updated_at  DateTime  @updatedAt
     deleted_flg Boolean   @default(false)
-    Category    Category? @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    Category    Category  @relation(fields: [category_id], references: [id], onDelete: Cascade)
     Product     Product[]
 
     @@index([status, popular, category_id])
@@ -55,61 +55,51 @@ model Brand {
 model Attributes {
     id               String             @id @default(uuid())
     name             String             @db.VarChar
-    slug             String             @unique @db.VarChar
     description      String?            @db.VarChar
-    category_id      String?
+    category_id      String
     created_at       DateTime           @default(now())
     updated_at       DateTime           @updatedAt
     deleted_flg      Boolean            @default(false)
-    Category         Category?          @relation(fields: [category_id], references: [id], onDelete: Cascade)
-    Variations       Variations[]
+    Category         Category           @relation(fields: [category_id], references: [id], onDelete: Cascade)
     ProductAttribute ProductAttribute[]
+    VariantAttribute VariantAttribute[]
 
-    @@index([category_id])
+    @@unique([name, category_id])
 }
 
 model Variations {
     id               String             @id @default(uuid())
     name             String             @db.VarChar
-    attribute_id     String?
     created_at       DateTime           @default(now())
     updated_at       DateTime           @updatedAt
     deleted_flg      Boolean            @default(false)
-    Attribute        Attributes?        @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
-    ProductVariation ProductVariation[]
+    VariantAttribute VariantAttribute[]
 
-    @@index([attribute_id])
+    @@unique([name])
 }
 
 model ProductAttribute {
-    id               String             @id @default(uuid())
-    product_id       String?
-    attribute_id     String?
-    Attribute        Attributes?        @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
-    Product          Product?           @relation(fields: [product_id], references: [id], onDelete: Cascade)
-    ProductVariation ProductVariation[]
+    id           String      @id @default(uuid())
+    value        String      @db.VarChar
+    product_id   String
+    attribute_id String
+    Attributes   Attributes? @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+    Product      Product?    @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
-    @@index([product_id, attribute_id])
+    @@unique([product_id, attribute_id])
 }
 
-model ProductVariation {
-    id                   String            @id @default(uuid())
-    product_attribute_id String?
-    variation_id         String?
-    ProductAttribute     ProductAttribute? @relation(fields: [product_attribute_id], references: [id], onDelete: Cascade)
-    Variations           Variations?       @relation(fields: [variation_id], references: [id], onDelete: Cascade)
+model VariantAttribute {
+    id           Int        @id @default(autoincrement())
+    value        String
+    variation_id String
+    attribute_id String
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    Variations   Variations @relation(fields: [variation_id], references: [id], onDelete: Cascade)
+    Attributes   Attributes @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
 
-    @@index([variation_id, product_attribute_id])
-}
-
-model ProductCombination {
-    id         String   @id @default(uuid())
-    product_id String?
-    sku        String   @db.VarChar
-    price      Float    @db.Real
-    Product    Product? @relation(fields: [product_id], references: [id], onDelete: Cascade)
-
-    @@index([product_id])
+    @@unique([variation_id, attribute_id])
 }
 
 model ProductGalleryDetail {
@@ -148,7 +138,6 @@ model Product {
     Category             Category               @relation(fields: [category_id], references: [id], onDelete: Cascade)
     Brand                Brand?                 @relation(fields: [brand_id], references: [id], onDelete: Cascade)
     ProductAttribute     ProductAttribute[]
-    ProductCombination   ProductCombination[]
     ProductGalleryDetail ProductGalleryDetail[]
 
     @@index([brand_id, category_id, status, popular])

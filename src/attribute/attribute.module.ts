@@ -1,8 +1,10 @@
 // ** NestJS Imports
 import { Module } from '@nestjs/common'
 
-// ** Attribute Imports
+// ** Service Imports
 import { AttributeService } from './attribute.service'
+
+// ** Controller Imports
 import { AttributeController } from './attribute.controller'
 
 // ** Prisma Imports

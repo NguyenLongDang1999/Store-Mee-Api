@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 
-// ** Category Imports
+// ** Types Imports
 import { CategorySearch } from './category.interface'
 
 // ** Prisma Imports

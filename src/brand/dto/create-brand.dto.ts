@@ -4,7 +4,6 @@ import {
     IsString,
     IsNumber,
     MaxLength,
-    MinLength,
     IsOptional
 } from 'class-validator'
 
@@ -20,9 +19,10 @@ export class CreateBrandDto {
     @ApiProperty()
         slug: string
 
-    @IsOptional()
-    @ApiProperty({ required: false })
-        category_id?: string
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty()
+        category_id: string
     
     @IsOptional()
     @MaxLength(160)
