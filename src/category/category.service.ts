@@ -14,7 +14,7 @@ import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class CategoryService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async create(createCategoryDto: CreateCategoryDto) {
         return await this.prisma.category.create({
@@ -40,7 +40,7 @@ export class CategoryService {
                 equals: Number(query.popular) || undefined
             }
         }
-        
+
         const data = await this.prisma.category.findMany({
             take: Number(query.pageSize) || undefined,
             skip: Number(query.page) || undefined,
@@ -73,8 +73,12 @@ export class CategoryService {
     }
 
     async categoryExist(slug: string, id?: string) {
-        const params = id ? { slug, id: { not: id } } : { slug }
-        return await this.prisma.category.count({ where: params })
+        return await this.prisma.category.count({
+            where: {
+                id: { not: id || undefined },
+                slug
+            }
+        })
     }
 
     async fetchList() {
@@ -92,7 +96,7 @@ export class CategoryService {
     }
 
     async findOne(id: string) {
-        return await this.prisma.category.findUnique({ 
+        return await this.prisma.category.findUnique({
             where: { id },
             select: {
                 id: true,

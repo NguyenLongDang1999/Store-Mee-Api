@@ -15,7 +15,7 @@ import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class BrandService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async create(createBrandDto: CreateBrandDto) {
         return await this.prisma.brand.create({ data: createBrandDto })
@@ -71,8 +71,12 @@ export class BrandService {
     }
 
     async brandExist(slug: string, id?: string) {
-        const params = id ? { slug, id: { not: id } } : { slug }
-        return await this.prisma.brand.count({ where: params })
+        return await this.prisma.brand.count({
+            where: {
+                id: { not: id || undefined },
+                slug
+            }
+        })
     }
 
     async fetchList(params: queryID) {
@@ -90,7 +94,7 @@ export class BrandService {
     }
 
     async findOne(id: string) {
-        return await this.prisma.brand.findUnique({ 
+        return await this.prisma.brand.findUnique({
             where: { id },
             select: {
                 id: true,

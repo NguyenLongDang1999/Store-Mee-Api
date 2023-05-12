@@ -10,9 +10,6 @@ import {
 
 import { Type } from 'class-transformer'
 
-// import { CreateProductVariationDto } from '../../product-variation/dto/create-product-variation.dto'
-// import { CreateProductAttributeDto } from '../../product-attribute/dto/create-product-attribute.dto'
-
 class CreateProductAttributeDto {
     @IsNotEmpty()
     @IsString()
@@ -23,6 +20,10 @@ class CreateProductAttributeDto {
     @IsString()
     @ApiProperty()
         name: string
+
+    @IsNotEmpty()
+    @ApiProperty()
+        variant: string[]
 }
 
 export class CreateProductDto {
@@ -113,8 +114,5 @@ export class CreateProductDto {
     @IsNotEmpty()
     @ValidateNested({ each: true })
     @Type(() => CreateProductAttributeDto)
-        attribute: CreateProductAttributeDto[]
-
-    @IsNotEmpty()
-        variant: Array<Array<string>>
+        ProductAttribute: CreateProductAttributeDto[]
 }

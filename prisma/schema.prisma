@@ -80,13 +80,13 @@ model Variations {
 
 model ProductAttribute {
     id           String      @id @default(uuid())
-    value        String      @db.VarChar
+    name         String      @db.VarChar
     product_id   String
     attribute_id String
     Attributes   Attributes? @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
     Product      Product?    @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
-    @@unique([product_id, attribute_id])
+    @@unique([name, product_id, attribute_id])
 }
 
 model VariantAttribute {
