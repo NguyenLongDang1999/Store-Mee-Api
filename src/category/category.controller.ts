@@ -30,12 +30,12 @@ import { CategorySearch } from './category.interface'
 // ** Service Imports
 import { CategoryService } from './category.service'
 
-@UseGuards(AccessTokenGuard)
 @Controller('category')
 export class CategoryController {
     constructor(private readonly categoryService: CategoryService) {}
 
     @Post()
+    @UseGuards(AccessTokenGuard)
     async create(
         @Res() res: Response,
         @Body() createCategoryDto: CreateCategoryDto
@@ -54,6 +54,7 @@ export class CategoryController {
     }
 
     @Get('fetch-list')
+    @UseGuards(AccessTokenGuard)
     async fetchList(@Res() res: Response) {
         const fetchList = await this.categoryService.fetchList()
         if (fetchList) {
@@ -64,6 +65,7 @@ export class CategoryController {
     }
 
     @Get()
+    @UseGuards(AccessTokenGuard)
     async findAll(
         @Res() res: Response,
         @Query() params?: CategorySearch
@@ -78,6 +80,7 @@ export class CategoryController {
     }
 
     @Get(':id')
+    @UseGuards(AccessTokenGuard)
     async findOne(
         @Res() res: Response,
         @Param('id') id: string
@@ -91,6 +94,7 @@ export class CategoryController {
     }
 
     @Patch(':id')
+    @UseGuards(AccessTokenGuard)
     async update(
         @Res() res: Response,
         @Param('id') id: string,
@@ -113,6 +117,7 @@ export class CategoryController {
     }
 
     @Patch('delete/:id')
+    @UseGuards(AccessTokenGuard)
     async remove(
         @Res() res: Response,
         @Param('id') id: string
@@ -120,6 +125,31 @@ export class CategoryController {
         const remove = await this.categoryService.remove(id)
         if (remove) {
             return res.status(HttpStatus.NO_CONTENT).json({ message: 'Category Remove Successfully!' })
+        }
+
+        throw new BadRequestException('Bad Request. Please try again!')
+    }
+
+    // --------------------------------- USER ---------------------------------
+    @Get('user/get-list')
+    async userGetList(@Res() res: Response) {
+        const fetchList = await this.categoryService.userGetList()
+        if (fetchList) {
+            return res.status(HttpStatus.OK).json(fetchList)
+        }
+
+        throw new BadRequestException('Bad Request. Please try again!')
+    }
+
+    // --------------------------------- USER ---------------------------------
+    @Get('user/:slug')
+    async userGetDetail(
+        @Res() res: Response,
+        @Param('slug') slug: string
+    ) {
+        const fetchDetail = await this.categoryService.userGetDetail(slug)
+        if (fetchDetail) {
+            return res.status(HttpStatus.OK).json(fetchDetail)
         }
 
         throw new BadRequestException('Bad Request. Please try again!')

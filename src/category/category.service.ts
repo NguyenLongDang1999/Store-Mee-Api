@@ -8,6 +8,9 @@ import { UpdateCategoryDto } from './dto/update-category.dto'
 // ** Types Imports
 import { CategorySearch } from './category.interface'
 
+// ** Utils Imports
+import { POPULAR, STATUS } from 'src/utils/enum'
+
 // ** Prisma Imports
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
@@ -125,6 +128,54 @@ export class CategoryService {
         return await this.prisma.category.update({
             where: { id },
             data: { deleted_flg: true }
+        })
+    }
+
+    // --------------------------------- USER ---------------------------------
+    async userGetList() {
+        return await this.prisma.category.findMany({
+            orderBy: { created_at: 'desc' },
+            where: {
+                deleted_flg: false,
+                parent_id: null,
+                status: STATUS.ACTIVE,
+                popular: POPULAR.ACTIVE
+            },
+            select: {
+                id: true,
+                slug: true,
+                name: true,
+                image_uri: true
+            }
+        })
+    }
+
+    async userGetDetail(slug: string) {
+        return await this.prisma.category.findFirst({
+            orderBy: { created_at: 'desc' },
+            where: { 
+                deleted_flg: false,
+                status: STATUS.ACTIVE,
+                slug
+            },
+            select: {
+                id: true,
+                name: true,
+                image_uri: true,
+                description: true,
+                meta_title: true,
+                meta_keyword: true,
+                meta_description: true,
+                Product: {
+                    orderBy: { created_at: 'desc' },
+                    select: {
+                        id: true,
+                        slug: true,
+                        name: true,
+                        image_uri: true
+                    }
+                }
+            }
         })
     }
 }

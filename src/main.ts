@@ -16,7 +16,7 @@ async function bootstrap() {
     app.get(ConfigService)
     app.use(cookieParser())
     app.enableCors({
-        origin: process.env.CMS_URL,
+        origin: [process.env.CMS_URL, process.env.USER_URL],
         credentials: true
     })
     app.useGlobalPipes(new ValidationPipe())
